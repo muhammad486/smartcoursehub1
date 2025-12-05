@@ -1,0 +1,2868 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>SmartCourseHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Google Font -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css"
+    />
+
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+        background: radial-gradient(circle at top left, #1a3c6e, #050816);
+        color: #f9fafb;
+        min-height: 100vh;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .app-shell {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 260px;
+        background: rgba(15, 23, 42, 0.98);
+        border-right: 1px solid rgba(148, 163, 184, 0.2);
+        display: flex;
+        flex-direction: column;
+        padding: 1.5rem 1.25rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .logo-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 999px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: conic-gradient(from 180deg, #22c55e, #38bdf8, #a855f7, #22c55e);
+        box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+      }
+
+      .logo-icon span {
+        background: #020617;
+        border-radius: 999px;
+        padding: 6px 9px;
+        font-size: 0.8rem;
+        font-weight: 700;
+      }
+
+      .logo-text h1 {
+        font-size: 1.15rem;
+        font-weight: 700;
+      }
+
+      .logo-text p {
+        font-size: 0.75rem;
+        color: #9ca3af;
+      }
+
+      .nav-section-title {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #6b7280;
+        margin: 1.25rem 0 0.5rem;
+      }
+
+      .nav-list {
+        list-style: none;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.55rem 0.65rem;
+        border-radius: 0.7rem;
+        cursor: pointer;
+        font-size: 0.9rem;
+        color: #e5e7eb;
+        transition: all 0.15s ease;
+      }
+      .nav-item i {
+        font-size: 0.9rem;
+        width: 18px;
+        text-align: center;
+      }
+      .nav-item span.badge {
+        margin-left: auto;
+        font-size: 0.7rem;
+        padding: 0.15rem 0.45rem;
+        border-radius: 999px;
+        background: rgba(59, 130, 246, 0.2);
+        color: #bfdbfe;
+      }
+      .nav-item:hover {
+        background: rgba(30, 64, 175, 0.5);
+        transform: translateY(-1px);
+      }
+      .nav-item.active {
+        background: linear-gradient(120deg, #1d4ed8, #7c3aed);
+        box-shadow: 0 0 15px rgba(59, 130, 246, 0.7);
+      }
+
+      .sidebar-footer {
+        margin-top: auto;
+        margin-bottom: 0.5rem;
+        padding-top: 1rem;
+        border-top: 1px dashed rgba(148, 163, 184, 0.3);
+        font-size: 0.8rem;
+        color: #9ca3af;
+      }
+
+      .user-pill {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.4rem;
+      }
+
+      .user-pill-main {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+      }
+
+      .user-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 999px;
+        background: radial-gradient(circle at 30% 30%, #38bdf8, #1d4ed8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .user-info {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .user-info span:first-child {
+        font-size: 0.8rem;
+        font-weight: 500;
+      }
+
+      .user-info span:last-child {
+        font-size: 0.7rem;
+        color: #9ca3af;
+      }
+
+      .logout-btn {
+        border: none;
+        background: rgba(248, 113, 113, 0.15);
+        color: #fecaca;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+      .logout-btn:hover {
+        background: rgba(239, 68, 68, 0.3);
+      }
+
+      .small-note {
+        font-size: 0.7rem;
+        opacity: 0.7;
+      }
+
+      /* Main content */
+      .main {
+        flex: 1;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .top-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+
+      .page-title {
+        display: flex;
+        flex-direction: column;
+        gap: 0.2rem;
+      }
+
+      .page-title h2 {
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .page-title p {
+        font-size: 0.85rem;
+        color: #9ca3af;
+      }
+
+      .pill-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+        color: #e5e7eb;
+        background: rgba(15, 23, 42, 0.8);
+      }
+
+      .chip.accent {
+        border-color: rgba(96, 165, 250, 0.8);
+        background: radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.6), rgba(15, 23, 42, 0.8));
+      }
+
+      .cta-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 999px;
+        padding: 0.55rem 0.9rem;
+        font-size: 0.8rem;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: linear-gradient(130deg, #2563eb, #7c3aed);
+        color: #f9fafb;
+        box-shadow: 0 0 18px rgba(59, 130, 246, 0.7);
+      }
+
+      .btn-outline {
+        background: transparent;
+        color: #e5e7eb;
+        border: 1px solid rgba(148, 163, 184, 0.7);
+      }
+
+      /* Layout grid */
+      .grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .grid-2 {
+        grid-template-columns: 2fr 1.5fr;
+      }
+
+      @media (max-width: 900px) {
+        .app-shell {
+          flex-direction: column;
+        }
+        .sidebar {
+          width: 100%;
+          border-right: none;
+          border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+          padding-bottom: 0.75rem;
+        }
+        .main {
+          padding: 1rem;
+        }
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: rgba(15, 23, 42, 0.86);
+        border-radius: 1rem;
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.3);
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.8);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+
+      .card-header h3 {
+        font-size: 1rem;
+      }
+
+      .card-header span {
+        font-size: 0.75rem;
+        color: #9ca3af;
+      }
+
+      .card-body {
+        font-size: 0.85rem;
+        color: #d1d5db;
+      }
+
+      /* Auth forms */
+      .auth-tabs {
+        display: flex;
+        background: rgba(15, 23, 42, 0.9);
+        padding: 0.18rem;
+        border-radius: 999px;
+        margin-bottom: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.4);
+      }
+
+      .auth-tab {
+        flex: 1;
+        text-align: center;
+        font-size: 0.8rem;
+        padding: 0.4rem 0.2rem;
+        border-radius: 999px;
+        cursor: pointer;
+      }
+
+      .auth-tab.active {
+        background: linear-gradient(120deg, #2563eb, #7c3aed);
+        box-shadow: 0 0 12px rgba(59, 130, 246, 0.7);
+      }
+
+      .auth-toggle-role {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+        font-size: 0.75rem;
+      }
+
+      .auth-toggle-role button {
+        border-radius: 999px;
+        padding: 0.25rem 0.7rem;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: transparent;
+        color: #e5e7eb;
+        font-size: 0.75rem;
+      }
+
+      .auth-toggle-role button.active {
+        border-color: #2563eb;
+        background: rgba(37, 99, 235, 0.2);
+      }
+
+      .form-group {
+        margin-bottom: 0.7rem;
+      }
+
+      .form-group label {
+        display: block;
+        font-size: 0.8rem;
+        margin-bottom: 0.2rem;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 0.4rem 0.5rem;
+        border-radius: 0.6rem;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        background: rgba(15, 23, 42, 0.9);
+        color: #e5e7eb;
+        font-size: 0.8rem;
+      }
+
+      .form-group textarea {
+        resize: vertical;
+      }
+
+      .error-text {
+        font-size: 0.75rem;
+        color: #fecaca;
+        margin-top: 0.2rem;
+      }
+
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-size: 0.7rem;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(22, 163, 74, 0.1);
+        color: #bbf7d0;
+      }
+
+      /* Courses */
+      .course-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+        gap: 0.9rem;
+      }
+
+      .course-card {
+        background: radial-gradient(circle at 0 0, rgba(59, 130, 246, 0.35), rgba(15, 23, 42, 0.95));
+        border-radius: 1rem;
+        padding: 0.9rem;
+        border: 1px solid rgba(96, 165, 250, 0.4);
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .course-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .course-meta {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.7rem;
+        color: #cbd5f5;
+      }
+
+      .course-desc {
+        font-size: 0.8rem;
+        color: #d1d5db;
+      }
+
+      .progress-pill {
+        height: 6px;
+        border-radius: 999px;
+        background: rgba(30, 64, 175, 0.7);
+        overflow: hidden;
+      }
+
+      .progress-pill-inner {
+        height: 100%;
+        background: linear-gradient(120deg, #22c55e, #4ade80);
+      }
+
+      .pill-small {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.4rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .pill-small i {
+        font-size: 0.6rem;
+      }
+
+      .badge-green {
+        background: rgba(34, 197, 94, 0.18);
+        color: #bbf7d0;
+      }
+
+      .badge-blue {
+        background: rgba(59, 130, 246, 0.18);
+        color: #bfdbfe;
+      }
+      .badge-amber {
+        background: rgba(245, 158, 11, 0.18);
+        color: #fed7aa;
+      }
+
+      .section-tabs {
+        display: flex;
+        gap: 0.4rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.7rem;
+      }
+
+      .section-tab {
+        padding: 0.3rem 0.7rem;
+        font-size: 0.75rem;
+        border-radius: 999px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        background: rgba(15, 23, 42, 0.85);
+        color: #e5e7eb;
+      }
+      .section-tab.active {
+        border-color: #38bdf8;
+        background: rgba(8, 47, 73, 0.9);
+      }
+
+      .link-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 0.6rem;
+        border: 1px solid rgba(148, 163, 184, 0.6);
+        font-size: 0.8rem;
+        margin-right: 0.4rem;
+        margin-bottom: 0.4rem;
+      }
+      .link-chip i {
+        font-size: 0.75rem;
+      }
+
+      .tag-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.3rem;
+        margin-top: 0.4rem;
+      }
+
+      .tag {
+        font-size: 0.7rem;
+        padding: 0.18rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.9);
+        border: 1px solid rgba(148, 163, 184, 0.5);
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 1.4rem 0.7rem;
+        font-size: 0.85rem;
+        color: #9ca3af;
+      }
+
+      .kbd {
+        font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco,
+          Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 0.7rem;
+        padding: 0.1rem 0.3rem;
+        border-radius: 0.3rem;
+        background: rgba(15, 23, 42, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.6);
+      }
+
+      .mobile-only {
+        display: none;
+        margin-bottom: 0.7rem;
+      }
+
+      @media (max-width: 900px) {
+        .mobile-only {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!-- React + Babel CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/react@18/umd/react.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@babel/standalone/babel.min.js"></script>
+
+    <script type="text/babel">
+      const { useState, useEffect } = React;
+
+      const API_BASE = "";
+
+      const STORAGE_KEY = "smartcoursehub_user";
+
+      function saveUserToStorage(user) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
+      }
+
+      function loadUserFromStorage() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+
+      function clearUserStorage() {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+
+      async function apiFetch(path, options = {}, token) {
+        const res = await fetch(API_BASE + path, {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: "Bearer " + token } : {}),
+          },
+          ...options,
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (!res.ok) {
+          throw new Error(data.message || "Something went wrong");
+        }
+
+        return data;
+      }
+
+      function AppShell() {
+        const [user, setUser] = useState(loadUserFromStorage());
+        const [page, setPage] = useState("courses");
+        const [view, setView] = useState("auth");
+        const [selectedCourse, setSelectedCourse] = useState(null);
+
+        useEffect(() => {
+          if (!user) setView("auth");
+          else if (user.role === "admin") {
+            setView("admin");
+            setPage("admin-courses");
+          } else {
+            setView("user");
+            setPage("courses");
+          }
+        }, [user]);
+
+        const handleLogout = () => {
+          setUser(null);
+          clearUserStorage();
+          setSelectedCourse(null);
+          setView("auth");
+        };
+
+        const isAdmin = user && user.role === "admin";
+
+        return (
+          <div className="app-shell">
+            <Sidebar
+              user={user}
+              page={page}
+              setPage={setPage}
+              view={view}
+              setView={setView}
+              onLogout={handleLogout}
+            />
+            <main className="main">
+              <TopHeader user={user} page={page} />
+              {!user && <AuthPanel onAuthSuccess={setUser} />}
+              {user && !isAdmin && (
+                <UserPortal
+                  user={user}
+                  page={page}
+                  setPage={setPage}
+                  selectedCourse={selectedCourse}
+                  setSelectedCourse={setSelectedCourse}
+                  setView={setView}
+                />
+              )}
+              {user && isAdmin && (
+                <AdminPortal user={user} page={page} setPage={setPage} />
+              )}
+            </main>
+          </div>
+        );
+      }
+
+      function Sidebar({ user, page, setPage, view, setView, onLogout }) {
+        const isAdmin = user && user.role === "admin";
+
+        const handleNavClick = (targetPage) => {
+          if (!user && targetPage !== "auth") return;
+          setPage(targetPage);
+        };
+
+        return (
+          <aside className="sidebar">
+            <div className="logo">
+              <div className="logo-icon">
+                <span>SC</span>
+              </div>
+              <div className="logo-text">
+                <h1>SmartCourseHub</h1>
+                <p>CS Courses • Notes • Progress</p>
+              </div>
+            </div>
+
+            <p className="nav-section-title">Main</p>
+            <ul className="nav-list">
+              <li
+                className={
+                  "nav-item " +
+                  (page === "courses" && view !== "auth" ? "active" : "")
+                }
+                onClick={() => handleNavClick("courses")}
+              >
+                <i className="fa-solid fa-layer-group" />
+                <span>Browse Courses</span>
+                <span className="badge">CS Only</span>
+              </li>
+              <li
+                className={
+                  "nav-item " +
+                  (page === "my-courses" && view !== "auth" ? "active" : "")
+                }
+                onClick={() => handleNavClick("my-courses")}
+              >
+                <i className="fa-solid fa-bookmark" />
+                <span>My Courses</span>
+              </li>
+              {user && !isAdmin && (
+                <li
+                  className={
+                    "nav-item " + (page === "progress" ? "active" : "")
+                  }
+                  onClick={() => handleNavClick("progress")}
+                >
+                  <i className="fa-solid fa-chart-line" />
+                  <span>Progress Tracker</span>
+                </li>
+              )}
+              {user && !isAdmin && (
+                <li
+                  className={
+                    "nav-item " + (page === "certificates" ? "active" : "")
+                  }
+                  onClick={() => handleNavClick("certificates")}
+                >
+                  <i className="fa-solid fa-certificate" />
+                  <span>Certificates</span>
+                </li>
+              )}
+              {!user && (
+                <li
+                  className={"nav-item " + (view === "auth" ? "active" : "")}
+                  onClick={() => setView("auth")}
+                >
+                  <i className="fa-solid fa-user-lock" />
+                  <span>Login / Signup</span>
+                </li>
+              )}
+            </ul>
+
+            {isAdmin && (
+              <>
+                <p className="nav-section-title">Admin Portal</p>
+                <ul className="nav-list">
+                  <li
+                    className={
+                      "nav-item " +
+                      (page === "admin-courses" ? "active" : "")
+                    }
+                    onClick={() => handleNavClick("admin-courses")}
+                  >
+                    <i className="fa-solid fa-screwdriver-wrench" />
+                    <span>Manage Courses</span>
+                  </li>
+                  <li
+                    className={
+                      "nav-item " +
+                      (page === "admin-enrollments" ? "active" : "")
+                    }
+                    onClick={() => handleNavClick("admin-enrollments")}
+                  >
+                    <i className="fa-solid fa-users" />
+                    <span>Enrollments</span>
+                  </li>
+                  <li
+                    className={
+                      "nav-item " +
+                      (page === "admin-analytics" ? "active" : "")
+                    }
+                    onClick={() => handleNavClick("admin-analytics")}
+                  >
+                    <i className="fa-solid fa-chart-line" />
+                    <span>Analytics</span>
+                  </li>
+                </ul>
+              </>
+            )}
+
+            <div className="sidebar-footer">
+              {user ? (
+                <>
+                  <div className="user-pill">
+                    <div className="user-pill-main">
+                      <div className="user-avatar">
+                        {user.name ? user.name[0].toUpperCase() : "U"}
+                      </div>
+                      <div className="user-info">
+                        <span>{user.name}</span>
+                        <span>{user.role === "admin" ? "Admin" : "Student"}</span>
+                      </div>
+                    </div>
+                    <button className="logout-btn" onClick={onLogout}>
+                      <i className="fa-solid fa-arrow-right-from-bracket" />
+                    </button>
+                  </div>
+                  <p className="small-note">
+                    All your registered courses and progress are stored safely in
+                    MongoDB.
+                  </p>
+                </>
+              ) : (
+                <p className="small-note">
+                  Tip: use <span className="kbd">admin@smartcoursehub.com</span> /
+                  <span className="kbd">admin123</span> to access the admin panel.
+                </p>
+              )}
+            </div>
+          </aside>
+        );
+      }
+
+      function TopHeader({ user, page }) {
+        const isAdmin = user && user.role === "admin";
+
+        const pageTitleMap = {
+          courses: "Browse Computer Science Courses",
+          "my-courses": "My Registered Courses",
+          progress: "Progress Tracking",
+          certificates: "My Certificates",
+          "admin-courses": "Admin • Manage Courses",
+          "admin-enrollments": "Admin • Student Enrollments",
+          "admin-analytics": "Admin • Analytics Dashboard",
+        };
+
+        const subtitleMap = {
+          courses:
+            "Register for high-quality CS courses and instantly access notes, PDFs, playlists, guidance and projects.",
+          "my-courses":
+            "All your registered SmartCourseHub courses with quick access to content and progress.",
+          progress:
+            "Track your learning journey and update completion percentage for each registered course.",
+          certificates:
+            "View and download your certificates of completion.",
+          "admin-courses":
+            "Create, edit and delete courses. All changes are instantly visible to students.",
+          "admin-enrollments":
+            "Monitor which students registered for which course and their basic details.",
+          "admin-analytics":
+            "View comprehensive statistics about students, courses, enrollments, and learning progress.",
+        };
+
+        return (
+          <>
+            <div className="top-header">
+              <div className="page-title">
+                <h2>{pageTitleMap[page] || "SmartCourseHub"}</h2>
+                <p>{subtitleMap[page]}</p>
+              </div>
+              <div>
+                <div className="pill-row">
+                  {user ? (
+                    <>
+                      <span className="chip accent">
+                        <i className="fa-solid fa-circle-check" /> Logged in as{" "}
+                        {user.role === "admin" ? "Admin" : "Student"}
+                      </span>
+                      <span className="chip">
+                        <i className="fa-solid fa-database" /> MongoDB • Live
+                        backend
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="chip accent">
+                        <i className="fa-solid fa-right-to-bracket" /> Login to
+                        start
+                      </span>
+                      <span className="chip">
+                        <i className="fa-solid fa-code" /> React + Node + MongoDB
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+          </>
+        );
+      }
+
+      function AuthPanel({ onAuthSuccess }) {
+        const [mode, setMode] = useState("login"); // login | signup
+        const [role, setRole] = useState("user"); // user | admin (signup only)
+        const [form, setForm] = useState({
+          name: "",
+          email: "",
+          password: "",
+        });
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState("");
+
+        // Email validation helper
+        const isValidEmail = (email) => {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          return emailRegex.test(email) && email.length <= 255;
+        };
+
+        const handleChange = (e) => {
+          setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+        };
+        const handleSubmit = async (e) => {
+          e.preventDefault();
+          setError("");
+          setLoading(true);
+
+          // Frontend validation
+          if (mode === "signup") {
+            if (!form.name || form.name.trim().length < 2) {
+              setError("Name must be at least 2 characters long");
+              setLoading(false);
+              return;
+            }
+            if (!isValidEmail(form.email)) {
+              setError("Please enter a valid email address");
+              setLoading(false);
+              return;
+            }
+            if (form.password.length < 6) {
+              setError("Password must be at least 6 characters long");
+              setLoading(false);
+              return;
+            }
+          } else {
+            if (!isValidEmail(form.email)) {
+              setError("Please enter a valid email address");
+              setLoading(false);
+              return;
+            }
+            if (!form.password) {
+              setError("Password is required");
+              setLoading(false);
+              return;
+            }
+          }
+
+          try {
+            if (mode === "signup") {
+              const body = {
+                name: form.name,
+                email: form.email,
+                password: form.password,
+                role,
+              };
+              const data = await apiFetch("/api/auth/register", {
+                method: "POST",
+                body: JSON.stringify(body),
+              });
+              saveUserToStorage(data);
+              onAuthSuccess(data);
+            } else {
+              const data = await apiFetch("/api/auth/login", {
+                method: "POST",
+                body: JSON.stringify({
+                  email: form.email,
+                  password: form.password,
+                }),
+              });
+              saveUserToStorage(data);
+              onAuthSuccess(data);
+            }
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        return (
+          <div className="grid grid-2">
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>Login / Signup</h3>
+                  <span>Separate access for students and admin</span>
+                </div>
+                <div className="status-badge">
+                  <i className="fa-solid fa-shield-halved" />
+                  JWT Secured
+                </div>
+              </div>
+
+              <div className="auth-tabs">
+                <div
+                  className={"auth-tab " + (mode === "login" ? "active" : "")}
+                  onClick={() => setMode("login")}
+                >
+                  <i className="fa-solid fa-right-to-bracket" /> Login
+                </div>
+                <div
+                  className={"auth-tab " + (mode === "signup" ? "active" : "")}
+                  onClick={() => setMode("signup")}
+                >
+                  <i className="fa-solid fa-user-plus" /> Signup
+                </div>
+              </div>
+
+              {mode === "signup" && (
+                <div className="auth-toggle-role">
+                  <button
+                    type="button"
+                    className={role === "user" ? "active" : ""}
+                    onClick={() => setRole("user")}
+                  >
+                    Student
+                  </button>
+                  <button
+                    type="button"
+                    className={role === "admin" ? "active" : ""}
+                    onClick={() => setRole("admin")}
+                  >
+                    Admin
+                  </button>
+                </div>
+              )}
+
+              <form onSubmit={handleSubmit}>
+                {mode === "signup" && (
+                  <div className="form-group">
+                    <label>Full Name</label>
+                    <input
+                      name="name"
+                      placeholder="Enter your full name (at least 2 characters)"
+                      value={form.name}
+                      onChange={handleChange}
+                      required
+                    />
+                  </div>
+                )}
+                <div className="form-group">
+                  <label>Email</label>
+                  <input
+                    name="email"
+                    type="text"
+                    placeholder={
+                      mode === "login"
+                        ? "e.g. your@email.com"
+                        : "e.g. student@example.com"
+                    }
+                    value={form.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Password</label>
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder={mode === "signup" ? "At least 6 characters" : "Enter password"}
+                    value={form.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
+                {error && <p className="error-text">{error}</p>}
+                <button
+                  className="btn btn-primary"
+                  style={{ width: "100%", justifyContent: "center", marginTop: ".3rem" }}
+                  disabled={loading}
+                >
+                  {loading ? "Please wait..." : mode === "login" ? "Login" : "Create account"}
+                </button>
+              </form>
+              <p className="small-note" style={{ marginTop: "0.7rem" }}>
+                Default admin: <span className="kbd">admin@smartcoursehub.com</span> /
+                <span className="kbd">admin123</span> (auto seeded).
+              </p>
+            </section>
+
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>Why SmartCourseHub?</h3>
+                  <span>Perfect CS project for college evaluation</span>
+                </div>
+              </div>
+              <div className="card-body">
+                <ul style={{ listStyle: "none", display: "grid", gap: ".5rem" }}>
+                  <li>
+                    <i className="fa-solid fa-check-circle" /> Separate Student & Admin login
+                  </li>
+                  <li>
+                    <i className="fa-solid fa-check-circle" /> Course registration with form
+                    (name, phone, college, semester, etc.)
+                  </li>
+                  <li>
+                    <i className="fa-solid fa-check-circle" /> Course page with Notes, PDFs,
+                    YouTube playlist, guidance & projects
+                  </li>
+                  <li>
+                    <i className="fa-solid fa-check-circle" /> MongoDB storage for users, courses
+                    & enrollments
+                  </li>
+                  <li>
+                    <i className="fa-solid fa-check-circle" /> Progress tracking per course (0% to
+                    100%)
+                  </li>
+                </ul>
+                <div style={{ marginTop: "0.9rem" }}>
+                  <span className="pill-small badge-blue">
+                    <i className="fa-solid fa-code"></i> React in single HTML file
+                  </span>
+                </div>
+              </div>
+            </section>
+          </div>
+        );
+      }
+
+      function UserPortal({
+        user,
+        page,
+        setPage,
+        selectedCourse,
+        setSelectedCourse,
+        setView,
+      }) {
+        const [courses, setCourses] = useState([]);
+        const [myEnrollments, setMyEnrollments] = useState([]);
+        const [loadingCourses, setLoadingCourses] = useState(true);
+        const [loadingEnrollments, setLoadingEnrollments] = useState(false);
+        const [error, setError] = useState("");
+
+        const token = user?.token;
+
+        useEffect(() => {
+          loadCourses();
+          loadEnrollments(); // Load enrollments immediately when component mounts
+        }, []);
+
+        useEffect(() => {
+          if (page === "my-courses" || page === "progress") {
+            loadEnrollments();
+          }
+        }, [page]);
+
+        async function loadCourses() {
+          setLoadingCourses(true);
+          setError("");
+          try {
+            const data = await apiFetch("/api/courses");
+            setCourses(data);
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoadingCourses(false);
+          }
+        }
+
+        async function loadEnrollments() {
+          setLoadingEnrollments(true);
+          setError("");
+          try {
+            const data = await apiFetch("/api/enrollments/my", {}, token);
+            setMyEnrollments(data);
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoadingEnrollments(false);
+          }
+        }
+
+        async function handleEnroll(courseId, formData, onDone) {
+          try {
+            await apiFetch(
+              `/api/courses/${courseId}/enroll`,
+              {
+                method: "POST",
+                body: JSON.stringify(formData),
+              },
+              token
+            );
+            await loadEnrollments();
+            onDone && onDone();
+            // Don't redirect to my-courses, stay on courses page so user can see resources
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+
+        async function handleProgressUpdate(enrollmentId, progress) {
+          try {
+            await apiFetch(
+              `/api/enrollments/${enrollmentId}/progress`,
+              {
+                method: "PATCH",
+                body: JSON.stringify({ progress }),
+              },
+              token
+            );
+            await loadEnrollments();
+
+            // Issue certificate if progress reaches 100%
+            if (progress === 100) {
+              try {
+                await apiFetch(
+                  "/api/certificates/issue",
+                  {
+                    method: "POST",
+                    body: JSON.stringify({ enrollmentId }),
+                  },
+                  token
+                );
+                alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+              } catch (err) {
+                // Certificate may already exist, continue silently
+                console.log("Certificate info:", err.message);
+              }
+            }
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+
+        const enrolledCourseIds = new Set(
+          myEnrollments
+            .filter(en => en && en.course) // Filter out invalid entries
+            .map((en) => {
+              // Handle both populated and unpopulated course references
+              if (typeof en.course === 'object' && en.course._id) {
+                return en.course._id;
+              }
+              return en.course; // If it's just an ID string
+            })
+        );
+
+        return (
+          <>
+            {page === "courses" && (
+              <CoursesView
+                courses={courses}
+                loading={loadingCourses}
+                error={error}
+                selectedCourse={selectedCourse}
+                setSelectedCourse={setSelectedCourse}
+                enrolledCourseIds={enrolledCourseIds}
+                onEnroll={handleEnroll}
+                myEnrollments={myEnrollments}
+                token={token}
+                onEnrollmentUpdate={loadEnrollments}
+              />
+            )}
+
+            {page === "my-courses" && (
+              <MyCoursesView
+                enrollments={myEnrollments}
+                loading={loadingEnrollments}
+                error={error}
+                onProgressUpdate={handleProgressUpdate}
+              />
+            )}
+
+            {page === "progress" && (
+              <ProgressView
+                enrollments={myEnrollments}
+                loading={loadingEnrollments}
+                error={error}
+                onProgressUpdate={handleProgressUpdate}
+              />
+            )}
+
+            {page === "certificates" && (
+              <CertificatesView
+                enrollments={myEnrollments}
+                token={user?.token}
+              />
+            )}
+          </>
+        );
+      }
+
+      function CoursesView({
+        courses,
+        loading,
+        error,
+        selectedCourse,
+        setSelectedCourse,
+        enrolledCourseIds,
+        onEnroll,
+        myEnrollments,
+        token,
+        onEnrollmentUpdate,
+      }) {
+        const [activeTab, setActiveTab] = useState("overview");
+        const [searchText, setSearchText] = useState("");
+        const [filterLevel, setFilterLevel] = useState("");
+        const [filterCategory, setFilterCategory] = useState("");
+        const [sortBy, setSortBy] = useState("newest");
+
+        const filteredCourses = courses.filter((course) => {
+          const matchSearch =
+            !searchText ||
+            course.title.toLowerCase().includes(searchText.toLowerCase()) ||
+            course.shortDescription.toLowerCase().includes(searchText.toLowerCase());
+          const matchLevel = !filterLevel || course.level === filterLevel;
+          const matchCategory = !filterCategory || course.category === filterCategory;
+          return matchSearch && matchLevel && matchCategory;
+        });
+
+        const sortedCourses = [...filteredCourses].sort((a, b) => {
+          if (sortBy === "newest") return new Date(b.createdAt) - new Date(a.createdAt);
+          if (sortBy === "oldest") return new Date(a.createdAt) - new Date(b.createdAt);
+          if (sortBy === "rating") return (b.averageRating || 0) - (a.averageRating || 0);
+          return 0;
+        });
+
+        return (
+          <div className="grid grid-2">
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>Available CS Courses</h3>
+                  <span>Click a course to view details & register</span>
+                </div>
+              </div>
+
+              {/* Search & Filter Controls */}
+              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: "0.75rem", marginBottom: "1rem" }}>
+                <input
+                  type="text"
+                  placeholder="Search by title or description..."
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                  className="input-field"
+                  style={{ gridColumn: "1 / 2" }}
+                />
+                <select
+                  value={filterLevel}
+                  onChange={(e) => setFilterLevel(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">All Levels</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Advanced">Advanced</option>
+                </select>
+                <select
+                  value={filterCategory}
+                  onChange={(e) => setFilterCategory(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="">All Categories</option>
+                  <option value="Computer Science">CS</option>
+                  <option value="Web Development">Web Dev</option>
+                  <option value="Data Science">Data Science</option>
+                  <option value="AI & ML">AI & ML</option>
+                </select>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="input-field"
+                >
+                  <option value="newest">Newest</option>
+                  <option value="oldest">Oldest</option>
+                  <option value="rating">Top Rated</option>
+                </select>
+              </div>
+
+              {loading && <div className="empty-state">Loading courses...</div>}
+              {error && <div className="error-text">{error}</div>}
+              {!loading && !sortedCourses.length && (
+                <div className="empty-state">
+                  No courses match your filters. Try adjusting your search.
+                </div>
+              )}
+
+              <div className="course-grid">
+                {sortedCourses.map((course) => {
+                  const isEnrolled = enrolledCourseIds.has(course._id);
+                  return (
+                    <article
+                      key={course._id}
+                      className="course-card"
+                      onClick={() => {
+                        setSelectedCourse(course);
+                        setActiveTab("overview");
+                      }}
+                      style={{ cursor: "pointer" }}
+                    >
+                      <div className="course-title">{course.title}</div>
+                      {/* Star Rating Display */}
+                      <div style={{ fontSize: ".85rem", marginBottom: ".5rem", color: "#f59e0b" }}>
+                        {course.averageRating ? (
+                          <>
+                            {"★".repeat(Math.round(course.averageRating))}
+                            {"☆".repeat(5 - Math.round(course.averageRating))} {course.averageRating.toFixed(1)} ({course.totalRatings} {course.totalRatings === 1 ? "review" : "reviews"})
+                          </>
+                        ) : (
+                          <span style={{ color: "#9ca3af" }}>No ratings yet</span>
+                        )}
+                      </div>
+                      <p className="course-desc">
+                        {course.shortDescription?.slice(0, 110) || ""}
+                        {course.shortDescription &&
+                          course.shortDescription.length > 110 &&
+                          "..."}
+                      </p>
+                      <div className="course-meta">
+                        <span className="pill-small badge-blue">
+                          <i className="fa-solid fa-microchip" /> {course.category}
+                        </span>
+                        <span
+                          className={
+                            "pill-small " +
+                            (course.level === "Beginner"
+                              ? "badge-green"
+                              : course.level === "Intermediate"
+                              ? "badge-amber"
+                              : "badge-blue")
+                          }
+                        >
+                          <i className="fa-solid fa-signal" /> {course.level}
+                        </span>
+                      </div>
+                      <div style={{ marginTop: ".5rem" }}>
+                        <div className="progress-pill">
+                          <div
+                            className="progress-pill-inner"
+                            style={{ width: isEnrolled ? "100%" : "35%" }}
+                          />
+                        </div>
+                        <div
+                          style={{
+                            marginTop: ".1rem",
+                            fontSize: ".7rem",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            color: "#9ca3af",
+                          }}
+                        >
+                          <span>
+                            <i className="fa-solid fa-file-lines" /> Notes / PDFs
+                          </span>
+                          <span>
+                            {isEnrolled ? "Already registered" : "Click to view"}
+                          </span>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>
+                    {selectedCourse ? selectedCourse.title : "Course details & registration"}
+                  </h3>
+                  <span>
+                    {selectedCourse
+                      ? "Explore resources and register below"
+                      : "Select a course from the left to view details"}
+                  </span>
+                </div>
+              </div>
+
+              {!selectedCourse && (
+                <div className="empty-state">
+                  <i className="fa-solid fa-hand-pointer" /> Select any course on the
+                  left to open notes, PDFs, playlist and registration form.
+                </div>
+              )}
+
+              {selectedCourse && (
+                <CourseDetailTabs
+                  course={selectedCourse}
+                  activeTab={activeTab}
+                  setActiveTab={setActiveTab}
+                  isEnrolled={enrolledCourseIds.has(selectedCourse._id)}
+                  onEnroll={onEnroll}
+                  enrollment={myEnrollments.find(en => {
+                    // Handle both populated and unpopulated course references
+                    const enrollmentCourseId = typeof en.course === 'object' ? en.course?._id : en.course;
+                    return enrollmentCourseId === selectedCourse._id;
+                  })}
+                  token={token}
+                  onEnrollmentUpdate={onEnrollmentUpdate}
+                />
+              )}
+            </section>
+          </div>
+        );
+      }
+
+      function CourseDetailTabs({
+        course,
+        activeTab,
+        setActiveTab,
+        isEnrolled,
+        onEnroll,
+        enrollment,
+        token,
+        onEnrollmentUpdate,
+      }) {
+        const [form, setForm] = useState({
+          fullName: "",
+          phone: "",
+          college: "",
+          semester: "",
+          additionalNotes: "",
+        });
+        const [submitting, setSubmitting] = useState(false);
+        const [ratingValue, setRatingValue] = useState(5);
+        const [reviewText, setReviewText] = useState("");
+        const [reviews, setReviews] = useState([]);
+        const [reviewsLoading, setReviewsLoading] = useState(false);
+        const [reviewSubmitting, setReviewSubmitting] = useState(false);
+
+        const handleChange = (e) => {
+          setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+        };
+
+        const loadReviews = async () => {
+          if (!course._id) return;
+          try {
+            setReviewsLoading(true);
+            const res = await apiFetch(`/api/courses/${course._id}/reviews`, {}, token);
+            setReviews(res.ratings || []);
+          } catch (err) {
+            console.error("Error loading reviews:", err);
+          } finally {
+            setReviewsLoading(false);
+          }
+        };
+
+        const handleSubmitReview = async (e) => {
+          e.preventDefault();
+          if (!isEnrolled) {
+            alert("You must be enrolled to rate this course");
+            return;
+          }
+          try {
+            setReviewSubmitting(true);
+            await apiFetch(
+              `/api/courses/${course._id}/review`,
+              {
+                method: "POST",
+                body: JSON.stringify({ rating: ratingValue, review: reviewText }),
+              },
+              token
+            );
+            setRatingValue(5);
+            setReviewText("");
+            await loadReviews();
+            alert("Review submitted successfully!");
+          } catch (err) {
+            alert("Error submitting review");
+            console.error(err);
+          } finally {
+            setReviewSubmitting(false);
+          }
+        };
+
+        const handleTrackResource = (type) => {
+          // Open link immediately
+          if (type === "notes" && course.notesUrl) window.open(course.notesUrl, "_blank");
+          if (type === "pdf" && course.pdfUrl) window.open(course.pdfUrl, "_blank");
+          if (type === "playlist" && course.youtubePlaylistUrl) window.open(course.youtubePlaylistUrl, "_blank");
+          
+          // Track in background without blocking
+          if (enrollment && enrollment._id) {
+            apiFetch(
+              `/api/enrollments/${enrollment._id}/complete`,
+              {
+                method: "PATCH",
+                body: JSON.stringify({ type }),
+              },
+              token
+            ).then(() => {
+              // Refresh enrollments after tracking
+              setTimeout(async () => {
+                await onEnrollmentUpdate();
+                // Check if progress reached 100% and issue certificate
+                try {
+                  const enrollments = await apiFetch(`/api/enrollments`, {}, token);
+                  const updated = enrollments.find(e => e._id === enrollment._id);
+                  if (updated && updated.progress === 100) {
+                    await apiFetch(
+                      "/api/certificates/issue",
+                      {
+                        method: "POST",
+                        body: JSON.stringify({ enrollmentId: enrollment._id }),
+                      },
+                      token
+                    );
+                    alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+                  }
+                } catch (err) {
+                  console.log("Certificate check:", err.message);
+                }
+              }, 1000);
+            }).catch(err => {
+              console.error("Background tracking error:", err);
+            });
+          }
+        };
+
+        const handleSubmit = async (e) => {
+          e.preventDefault();
+          setSubmitting(true);
+          try {
+            await onEnroll(course._id, form, () => {
+              setForm({
+                fullName: "",
+                phone: "",
+                college: "",
+                semester: "",
+                additionalNotes: "",
+              });
+              alert("Successfully registered for course!");
+              // Wait for enrollments to reload before switching tab
+              setTimeout(() => {
+                setActiveTab("resources");
+              }, 500);
+            });
+          } catch (err) {
+            alert(err.message || "Registration failed");
+          } finally {
+            setSubmitting(false);
+          }
+        };
+
+        return (
+          <div className="card-body">
+            <div className="section-tabs">
+              <button
+                className={
+                  "section-tab " + (activeTab === "overview" ? "active" : "")
+                }
+                onClick={() => setActiveTab("overview")}
+              >
+                Overview
+              </button>
+              <button
+                className={
+                  "section-tab " + (activeTab === "resources" ? "active" : "")
+                }
+                onClick={() => {
+                  if (isEnrolled) setActiveTab("resources");
+                  else alert("Please register for this course first to access resources");
+                }}
+                style={{ opacity: isEnrolled ? 1 : 0.5, cursor: isEnrolled ? "pointer" : "not-allowed" }}
+              >
+                Notes / PDFs / Playlist
+              </button>
+              <button
+                className={
+                  "section-tab " + (activeTab === "ratings" ? "active" : "")
+                }
+                onClick={() => {
+                  setActiveTab("ratings");
+                  loadReviews();
+                }}
+              >
+                Ratings & Reviews
+              </button>
+              <button
+                className={
+                  "section-tab " + (activeTab === "register" ? "active" : "")
+                }
+                onClick={() => setActiveTab("register")}
+              >
+                {isEnrolled ? "Already Registered" : "Register Now"}
+              </button>
+            </div>
+
+            {activeTab === "overview" && (
+              <>
+                <p style={{ marginBottom: ".6rem" }}>{course.shortDescription}</p>
+                <div className="tag-row">
+                  <span className="tag">
+                    <i className="fa-solid fa-microchip" /> {course.category}
+                  </span>
+                  <span className="tag">
+                    <i className="fa-solid fa-signal" /> {course.level}
+                  </span>
+                  <span className="tag">
+                    <i className="fa-solid fa-circle-nodes" /> CS Focused
+                  </span>
+                </div>
+                {course.guidance && (
+                  <p style={{ marginTop: ".8rem", fontSize: ".8rem", opacity: 0.9 }}>
+                    <strong>Guidance:</strong> {course.guidance}
+                  </p>
+                )}
+                {course.projects && (
+                  <p style={{ marginTop: ".4rem", fontSize: ".8rem", opacity: 0.9 }}>
+                    <strong>Projects:</strong> {course.projects}
+                  </p>
+                )}
+              </>
+            )}
+
+            {activeTab === "resources" && (
+              <div>
+                {!isEnrolled ? (
+                  <div className="empty-state">
+                    <i className="fa-solid fa-lock" /> You need to register for this course first to access resources.
+                  </div>
+                ) : (
+                  <>
+                    {!course.notesUrl &&
+                      !course.pdfUrl &&
+                      !course.youtubePlaylistUrl &&
+                      !course.guidance &&
+                      !course.projects && (
+                        <div className="empty-state">
+                          Resources not configured. Ask admin to update the course with
+                          notes, PDFs and playlist links.
+                        </div>
+                      )}
+
+                    {course.notesUrl && (
+                      <a
+                        href="javascript:void(0)"
+                        className="link-chip"
+                        onClick={() => handleTrackResource("notes")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className="fa-solid fa-pen-to-square" /> Open Notes
+                      </a>
+                    )}
+
+                    {course.pdfUrl && (
+                      <a
+                        href="javascript:void(0)"
+                        className="link-chip"
+                        onClick={() => handleTrackResource("pdf")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className="fa-solid fa-file-pdf" /> View PDF
+                      </a>
+                    )}
+
+                    {course.youtubePlaylistUrl && (
+                      <a
+                        href="javascript:void(0)"
+                        className="link-chip"
+                        onClick={() => handleTrackResource("playlist")}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <i className="fa-brands fa-youtube" /> Open Playlist
+                      </a>
+                    )}
+
+                    {course.guidance && (
+                      <div style={{ marginTop: ".7rem", fontSize: ".8rem" }}>
+                        <p>
+                          <strong>Guidance:</strong> {course.guidance}
+                        </p>
+                        {enrollment && !enrollment.guidanceCompleted && (
+                          <button
+                            type="button"
+                            className="link-chip"
+                            onClick={async () => {
+                              try {
+                                await apiFetch(
+                                  `/api/enrollments/${enrollment._id}/complete`,
+                                  {
+                                    method: "PATCH",
+                                    body: JSON.stringify({ type: "guidance" }),
+                                  },
+                                  token
+                                );
+                                // Refresh enrollments
+                                await onEnrollmentUpdate();
+                                // Check and issue certificate if completed
+                                try {
+                                  const enrollments = await apiFetch(`/api/enrollments`, {}, token);
+                                  const updated = enrollments.find(e => e._id === enrollment._id);
+                                  if (updated && updated.progress === 100) {
+                                    await apiFetch(
+                                      "/api/certificates/issue",
+                                      { method: "POST", body: JSON.stringify({ enrollmentId: enrollment._id }) },
+                                      token
+                                    );
+                                    alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+                                  }
+                                } catch (err) {
+                                  console.log("Certificate check after guidance:", err.message);
+                                }
+                              } catch (err) {
+                                alert("Error marking guidance complete: " + err.message);
+                              }
+                            }}
+                            style={{ marginTop: ".5rem" }}
+                          >
+                            <i className="fa-solid fa-check" /> Mark guidance as read
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    {course.projects && (
+                      <p style={{ marginTop: ".3rem", fontSize: ".8rem" }}>
+                        <strong>Projects:</strong> {course.projects}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
+
+            {activeTab === "ratings" && (
+              <div>
+                {/* Add/Edit Review Form */}
+                {isEnrolled && (
+                  <form onSubmit={handleSubmitReview} style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid rgba(148,163,184,0.2)" }}>
+                    <h4 style={{ marginBottom: ".5rem" }}>Share Your Rating</h4>
+                    <div style={{ display: "flex", gap: "0.5rem", marginBottom: ".8rem" }}>
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setRatingValue(star)}
+                          style={{
+                            fontSize: "1.5rem",
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            color: star <= ratingValue ? "#f59e0b" : "#6b7280",
+                          }}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                    <textarea
+                      placeholder="Write your review (optional)..."
+                      value={reviewText}
+                      onChange={(e) => setReviewText(e.target.value)}
+                      className="input-field"
+                      style={{ minHeight: "80px", marginBottom: ".8rem" }}
+                    />
+                    <button
+                      type="submit"
+                      disabled={reviewSubmitting}
+                      className="btn-primary"
+                    >
+                      {reviewSubmitting ? "Submitting..." : "Submit Review"}
+                    </button>
+                  </form>
+                )}
+
+                {/* Reviews List */}
+                <h4 style={{ marginBottom: ".8rem" }}>
+                  Reviews ({reviews.length})
+                  {course.averageRating ? (
+                    <span style={{ marginLeft: ".5rem", fontSize: ".9rem", color: "#f59e0b" }}>
+                      {"★".repeat(Math.round(course.averageRating))}
+                      {"☆".repeat(5 - Math.round(course.averageRating))} {course.averageRating.toFixed(1)}
+                    </span>
+                  ) : null}
+                </h4>
+
+                {reviewsLoading && <div className="empty-state">Loading reviews...</div>}
+                {!reviewsLoading && !reviews.length && (
+                  <div className="empty-state">No reviews yet. Be the first to review!</div>
+                )}
+
+                {reviews.map((review, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      padding: ".75rem",
+                      marginBottom: ".5rem",
+                      background: "rgba(148,163,184,0.1)",
+                      borderRadius: "0.375rem",
+                    }}
+                  >
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: ".3rem" }}>
+                      <strong style={{ fontSize: ".9rem" }}>{review.user?.name || "Anonymous"}</strong>
+                      <span style={{ fontSize: ".8rem", color: "#f59e0b" }}>
+                        {"★".repeat(review.rating)}
+                        {"☆".repeat(5 - review.rating)}
+                      </span>
+                    </div>
+                    {review.review && (
+                      <p style={{ fontSize: ".8rem", marginBottom: ".3rem", opacity: 0.9 }}>
+                        {review.review}
+                      </p>
+                    )}
+                    <p style={{ fontSize: ".7rem", color: "#9ca3af" }}>
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {activeTab === "register" && (
+              <div>
+                {isEnrolled ? (
+                  <div className="empty-state">
+                    You are already registered for this course. Check{" "}
+                    <span className="kbd">My Courses</span> to access content and track
+                    progress.
+                  </div>
+                ) : (
+                  <>
+                    <p style={{ marginBottom: ".5rem" }}>
+                      Fill this registration form to enroll in{" "}
+                      <strong>{course.title}</strong>. All details will be stored in
+                      MongoDB and visible to admin.
+                    </p>
+                    <form onSubmit={handleSubmit}>
+                      <div className="form-group">
+                        <label>Full Name</label>
+                        <input
+                          name="fullName"
+                          required
+                          placeholder="Your full name"
+                          value={form.fullName}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Phone Number</label>
+                        <input
+                          name="phone"
+                          required
+                          placeholder="Enter phone number"
+                          value={form.phone}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>College Name</label>
+                        <input
+                          name="college"
+                          required
+                          placeholder="Your college name"
+                          value={form.college}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Semester / Year</label>
+                        <input
+                          name="semester"
+                          required
+                          placeholder="e.g. 4th Sem / 2nd Year"
+                          value={form.semester}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Additional Notes (Optional)</label>
+                        <textarea
+                          name="additionalNotes"
+                          rows="2"
+                          placeholder="Any specific expectations or background..."
+                          value={form.additionalNotes}
+                          onChange={handleChange}
+                        />
+                      </div>
+                      <button
+                        className="btn btn-primary"
+                        style={{ marginTop: ".4rem" }}
+                        disabled={submitting}
+                      >
+                        {submitting ? "Registering..." : "Register for this course"}
+                      </button>
+                    </form>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      function MyCoursesView({ enrollments, loading, error, onProgressUpdate }) {
+        return (
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h3>My Registered Courses</h3>
+                <span>Your progress is tracked automatically based on resources you access</span>
+              </div>
+            </div>
+            {loading && <div className="empty-state">Loading enrolled courses...</div>}
+            {error && <div className="error-text">{error}</div>}
+            {!loading && !enrollments.length && (
+              <div className="empty-state">
+                You have not registered for any course yet. Browse the courses and
+                register to see them here.
+              </div>
+            )}
+
+            <div className="course-grid">
+              {enrollments.map((en) => (
+                <article key={en._id} className="course-card" style={{ position: "relative" }}>
+                  {en.progress === 100 && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: ".5rem",
+                        right: ".5rem",
+                        background: "linear-gradient(135deg, #FFD700, #FFA500)",
+                        color: "#1e293b",
+                        padding: ".3rem .6rem",
+                        borderRadius: ".4rem",
+                        fontSize: ".7rem",
+                        fontWeight: "600",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: ".3rem",
+                        boxShadow: "0 2px 8px rgba(255,215,0,.4)",
+                      }}
+                    >
+                      <i className="fa-solid fa-certificate" />
+                      Certified
+                    </div>
+                  )}
+                  <div className="course-title">{en.course?.title}</div>
+                  <p className="course-desc">
+                    <strong>College:</strong> {en.college} •{" "}
+                    <strong>Semester:</strong> {en.semester}
+                  </p>
+                  <div style={{ marginTop: ".4rem" }}>
+                    <div className="progress-pill">
+                      <div
+                        className="progress-pill-inner"
+                        style={{ width: `${en.progress || 0}%` }}
+                      />
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        fontSize: ".7rem",
+                        marginTop: ".15rem",
+                        color: "#9ca3af",
+                      }}
+                    >
+                      <span>
+                        <i className="fa-solid fa-timeline" /> {en.progress || 0}% complete
+                      </span>
+                      <span>Auto-tracked from resources</span>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function ProgressView({ enrollments, loading, error, onProgressUpdate }) {
+        const average =
+          enrollments.length === 0
+            ? 0
+            : Math.round(
+                enrollments.reduce((sum, e) => sum + (e.progress || 0), 0) /
+                  enrollments.length
+              );
+
+        return (
+          <div className="grid grid-2">
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>Overall Progress</h3>
+                  <span>Summary of your learning journey</span>
+                </div>
+                <div className="status-badge">
+                  <i className="fa-solid fa-bullseye" />
+                  Avg {average}%
+                </div>
+              </div>
+              {loading && <div className="empty-state">Loading progress...</div>}
+              {error && <div className="error-text">{error}</div>}
+
+              <div className="card-body">
+                <p style={{ marginBottom: ".7rem" }}>
+                  You are currently enrolled in{" "}
+                  <strong>{enrollments.length} course(s)</strong>. Your progress is automatically tracked based on the resources you access in each course.
+                </p>
+                {!enrollments.length && (
+                  <div className="empty-state">
+                    Register for a course to start tracking your progress here.
+                  </div>
+                )}
+                {enrollments.map((en) => (
+                  <div
+                    key={en._id}
+                    style={{
+                      padding: ".55rem .6rem",
+                      borderRadius: ".7rem",
+                      background: "rgba(15,23,42,.9)",
+                      border: "1px solid rgba(148,163,184,.5)",
+                      marginBottom: ".5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: ".3rem",
+                      }}
+                    >
+                      <span style={{ fontSize: ".85rem" }}>
+                        {en.course?.title || "Course"}
+                      </span>
+                      <span className="pill-small badge-green">
+                        {en.progress || 0}% complete
+                      </span>
+                    </div>
+                    <div className="progress-pill">
+                      <div
+                        className="progress-pill-inner"
+                        style={{ width: `${en.progress || 0}%` }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>How to use this portal</h3>
+                  <span>For your viva & demonstration</span>
+                </div>
+              </div>
+              <div className="card-body">
+                <ol style={{ marginLeft: "1.2rem", fontSize: ".82rem" }}>
+                  <li>Student logs in / signs up and browses CS courses.</li>
+                  <li>
+                    On selecting a course, student sees resources: notes, PDFs, YouTube
+                    playlist, guidance, projects.
+                  </li>
+                  <li>
+                    Student clicks on <strong>Register</strong>, fills full name, phone,
+                    college, semester, etc.
+                  </li>
+                  <li>
+                    After registering, course appears in <strong>My Courses</strong> with
+                    a progress slider.
+                  </li>
+                  <li>
+                    Admin logs in separately, creates/edits courses and monitors
+                    enrollments (including student details).
+                  </li>
+                </ol>
+              </div>
+            </section>
+          </div>
+        );
+      }
+
+      function CertificatesView({ enrollments, token }) {
+        const [certificates, setCertificates] = useState([]);
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState("");
+
+        useEffect(() => {
+          loadCertificates();
+        }, []);
+
+        async function loadCertificates() {
+          setLoading(true);
+          setError("");
+          try {
+            const data = await apiFetch("/api/certificates", {}, token);
+            setCertificates(data || []);
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function handleDownload(certId) {
+          try {
+            await apiFetch(
+              `/api/certificates/${certId}/download`,
+              { method: "PATCH" },
+              token
+            );
+            alert("Certificate marked as downloaded!");
+            loadCertificates();
+          } catch (err) {
+            alert("Error: " + err.message);
+          }
+        }
+
+        return (
+          <div className="grid grid-1">
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>Certificates of Completion</h3>
+                  <span>Your earned certificates for completed courses</span>
+                </div>
+                <div className="status-badge">
+                  <i className="fa-solid fa-certificate" />
+                  {certificates.length} earned
+                </div>
+              </div>
+
+              {loading && <div className="empty-state">Loading certificates...</div>}
+              {error && <div className="error-text">{error}</div>}
+
+              <div className="card-body">
+                {!certificates.length && !loading ? (
+                  <div className="empty-state">
+                    <p>No certificates yet. Complete a course (100% progress) to earn a certificate!</p>
+                  </div>
+                ) : (
+                  <div style={{ display: "grid", gap: "1rem" }}>
+                    {certificates.map((cert) => (
+                      <div
+                        key={cert._id}
+                        style={{
+                          padding: "1rem",
+                          borderRadius: ".7rem",
+                          background: "linear-gradient(135deg, rgba(59,130,246,.15) 0%, rgba(139,92,246,.15) 100%)",
+                          border: "1px solid rgba(139,92,246,.5)",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: ".5rem", marginBottom: ".5rem" }}>
+                            <i className="fa-solid fa-certificate" style={{ color: "#FFD700", fontSize: "1.2rem" }} />
+                            <span style={{ fontSize: ".9rem", fontWeight: "600" }}>
+                              {cert.courseName || "Course"}
+                            </span>
+                          </div>
+                          <div style={{ fontSize: ".8rem", color: "rgba(148,163,184,.8)", marginBottom: ".3rem" }}>
+                            Certificate #: <strong>{cert.certificateNumber}</strong>
+                          </div>
+                          <div style={{ fontSize: ".8rem", color: "rgba(148,163,184,.8)" }}>
+                            Completed: <strong>{new Date(cert.completionDate).toLocaleDateString()}</strong>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDownload(cert._id)}
+                          style={{
+                            padding: ".5rem 1rem",
+                            background: "rgba(59,130,246,.8)",
+                            color: "white",
+                            border: "none",
+                            borderRadius: ".5rem",
+                            cursor: "pointer",
+                            fontSize: ".8rem",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: ".3rem",
+                          }}
+                          onMouseOver={(e) => e.target.style.background = "rgba(59,130,246,1)"}
+                          onMouseOut={(e) => e.target.style.background = "rgba(59,130,246,.8)"}
+                        >
+                          <i className="fa-solid fa-download" />
+                          Download
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        );
+      }
+
+      function AdminPortal({ user, page, setPage }) {
+        const [courses, setCourses] = useState([]);
+        const [enrollments, setEnrollments] = useState([]);
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState("");
+        const [editingCourse, setEditingCourse] = useState(null);
+
+        const token = user?.token;
+
+        useEffect(() => {
+          if (page === "admin-courses") loadCourses();
+          if (page === "admin-enrollments") loadEnrollments();
+        }, [page]);
+
+        async function loadCourses() {
+          setLoading(true);
+          setError("");
+          try {
+            const data = await apiFetch("/api/courses");
+            setCourses(data);
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function loadEnrollments() {
+          setLoading(true);
+          setError("");
+          try {
+            const data = await apiFetch("/api/admin/enrollments", {}, token);
+            setEnrollments(data);
+          } catch (err) {
+            setError(err.message);
+          } finally {
+            setLoading(false);
+          }
+        }
+
+        async function handleCourseSave(courseData) {
+          try {
+            if (editingCourse) {
+              await apiFetch(
+                  `/api/courses/${editingCourse._id}`,
+                  {
+                    method: "PUT",
+                    body: JSON.stringify(courseData),
+                  },
+                  token
+                );
+            } else {
+              await apiFetch(
+                `/api/courses`,
+                {
+                  method: "POST",
+                  body: JSON.stringify(courseData),
+                },
+                token
+              );
+            }
+            setEditingCourse(null);
+            await loadCourses();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+
+        async function handleDeleteCourse(id) {
+          if (!confirm("Delete this course permanently?")) return;
+          try {
+            await apiFetch(
+              `/api/courses/${id}`,
+              {
+                method: "DELETE",
+              },
+              token
+            );
+            await loadCourses();
+          } catch (err) {
+            alert(err.message);
+          }
+        }
+
+        return (
+          <>
+            {page === "admin-courses" && (
+              <AdminCoursesView
+                courses={courses}
+                loading={loading}
+                error={error}
+                editingCourse={editingCourse}
+                setEditingCourse={setEditingCourse}
+                onSaveCourse={handleCourseSave}
+                onDeleteCourse={handleDeleteCourse}
+              />
+            )}
+            {page === "admin-enrollments" && (
+              <AdminEnrollmentsView
+                enrollments={enrollments}
+                loading={loading}
+                error={error}
+              />
+            )}
+            {page === "admin-analytics" && (
+              <AdminAnalyticsView
+                token={token}
+              />
+            )}
+          </>
+        );
+      }
+
+      function AdminCoursesView({
+        courses,
+        loading,
+        error,
+        editingCourse,
+        setEditingCourse,
+        onSaveCourse,
+        onDeleteCourse,
+      }) {
+        const [form, setForm] = useState({
+          title: "",
+          shortDescription: "",
+          level: "Beginner",
+          category: "Computer Science",
+          notesUrl: "",
+          pdfUrl: "",
+          youtubePlaylistUrl: "",
+          guidance: "",
+          projects: "",
+        });
+
+        useEffect(() => {
+          if (editingCourse) setForm({ ...editingCourse });
+          else
+            setForm({
+              title: "",
+              shortDescription: "",
+              level: "Beginner",
+              category: "Computer Science",
+              notesUrl: "",
+              pdfUrl: "",
+              youtubePlaylistUrl: "",
+              guidance: "",
+              projects: "",
+            });
+        }, [editingCourse]);
+
+        const handleChange = (e) => {
+          setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+        };
+
+        const handleSubmit = (e) => {
+          e.preventDefault();
+          onSaveCourse(form);
+        };
+
+        return (
+          <div className="grid grid-2">
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>{editingCourse ? "Edit Course" : "Create New Course"}</h3>
+                  <span>
+                    Configure notes, PDFs, playlists, guidance and project details
+                  </span>
+                </div>
+              </div>
+              <div className="card-body">
+                <form onSubmit={handleSubmit}>
+                  <div className="form-group">
+                    <label>Course Title</label>
+                    <input
+                      name="title"
+                      required
+                      placeholder="e.g. Data Structures and Algorithms"
+                      value={form.title}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Short Description</label>
+                    <textarea
+                      name="shortDescription"
+                      rows="2"
+                      required
+                      placeholder="Brief overview of course..."
+                      value={form.shortDescription}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Level</label>
+                    <select
+                      name="level"
+                      value={form.level}
+                      onChange={handleChange}
+                    >
+                      <option>Beginner</option>
+                      <option>Intermediate</option>
+                      <option>Advanced</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Notes URL</label>
+                    <input
+                      name="notesUrl"
+                      placeholder="https://..."
+                      value={form.notesUrl || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>PDF URL</label>
+                    <input
+                      name="pdfUrl"
+                      placeholder="https://..."
+                      value={form.pdfUrl || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>YouTube Playlist URL</label>
+                    <input
+                      name="youtubePlaylistUrl"
+                      placeholder="https://youtube.com/playlist?list=..."
+                      value={form.youtubePlaylistUrl || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Guidance (Text)</label>
+                    <textarea
+                      name="guidance"
+                      rows="2"
+                      placeholder="How student should study this course..."
+                      value={form.guidance || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Projects (Text)</label>
+                    <textarea
+                      name="projects"
+                      rows="2"
+                      placeholder="Mini and major projects based on this course..."
+                      value={form.projects || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: ".5rem",
+                      marginTop: ".4rem",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <button className="btn btn-primary" type="submit">
+                      {editingCourse ? "Update Course" : "Create Course"}
+                    </button>
+                    {editingCourse && (
+                      <button
+                        type="button"
+                        className="btn btn-outline"
+                        onClick={() => setEditingCourse(null)}
+                      >
+                        Cancel Edit
+                      </button>
+                    )}
+                  </div>
+                </form>
+              </div>
+            </section>
+
+            <section className="card">
+              <div className="card-header">
+                <div>
+                  <h3>Existing Courses</h3>
+                  <span>Click edit / delete as needed</span>
+                </div>
+              </div>
+              {loading && <div className="empty-state">Loading courses...</div>}
+              {error && <div className="error-text">{error}</div>}
+              {!loading && !courses.length && (
+                <div className="empty-state">
+                  No courses created yet. Use the form on the left to add some.
+                </div>
+              )}
+
+              <div className="card-body">
+                {courses.map((c) => (
+                  <div
+                    key={c._id}
+                    style={{
+                      padding: ".6rem .5rem",
+                      borderRadius: ".7rem",
+                      border: "1px solid rgba(148,163,184,.5)",
+                      marginBottom: ".5rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        gap: ".3rem",
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: ".85rem", fontWeight: 500 }}>
+                          {c.title}
+                        </div>
+                        <div style={{ fontSize: ".75rem", color: "#9ca3af" }}>
+                          {c.level} • {c.category}
+                        </div>
+                      </div>
+                      <div style={{ display: "flex", gap: ".3rem" }}>
+                        <button
+                          className="btn btn-outline"
+                          style={{ fontSize: ".75rem", padding: ".25rem .5rem" }}
+                          onClick={() => setEditingCourse(c)}
+                        >
+                          <i className="fa-solid fa-pen" /> Edit
+                        </button>
+                        <button
+                          className="btn"
+                          style={{
+                            fontSize: ".75rem",
+                            padding: ".25rem .5rem",
+                            background: "rgba(239,68,68,.25)",
+                          }}
+                          onClick={() => onDeleteCourse(c._id)}
+                        >
+                          <i className="fa-solid fa-trash" /> Delete
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          </div>
+        );
+      }
+
+      function AdminEnrollmentsView({ enrollments, loading, error }) {
+        return (
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h3>All Enrollments</h3>
+                <span>View student details for each registered course</span>
+              </div>
+            </div>
+            {loading && <div className="empty-state">Loading enrollments...</div>}
+            {error && <div className="error-text">{error}</div>}
+            {!loading && !enrollments.length && (
+              <div className="empty-state">No enrollments yet.</div>
+            )}
+            <div className="card-body">
+              {enrollments.map((en) => (
+                <div
+                  key={en._id}
+                  style={{
+                    padding: ".6rem .6rem",
+                    borderRadius: ".7rem",
+                    border: "1px solid rgba(148,163,184,.5)",
+                    marginBottom: ".5rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      gap: ".5rem",
+                      marginBottom: ".3rem",
+                    }}
+                  >
+                    <div>
+                      <div style={{ fontSize: ".85rem", fontWeight: 500 }}>
+                        {en.user?.name} • {en.user?.email}
+                      </div>
+                      <div style={{ fontSize: ".75rem", color: "#9ca3af" }}>
+                        College: {en.college} • Semester: {en.semester}
+                      </div>
+                    </div>
+                    <span className="pill-small badge-blue">
+                      {en.course?.title || "Course"}
+                    </span>
+                  </div>
+                  {en.additionalNotes && (
+                    <div
+                      style={{ fontSize: ".75rem", color: "#e5e7eb", marginTop: ".2rem" }}
+                    >
+                      <strong>Notes:</strong> {en.additionalNotes}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      }
+
+      function AdminAnalyticsView({ token }) {
+        const [analytics, setAnalytics] = useState(null);
+        const [loading, setLoading] = useState(false);
+        const [error, setError] = useState("");
+
+        useEffect(() => {
+          loadAnalytics();
+        }, []);
+
+        const loadAnalytics = async () => {
+          try {
+            setLoading(true);
+            setError("");
+            const data = await apiFetch("/api/admin/analytics", {}, token);
+            setAnalytics(data);
+          } catch (err) {
+            setError("Error loading analytics data");
+            console.error(err);
+          } finally {
+            setLoading(false);
+          }
+        };
+
+        return (
+          <section className="card">
+            <div className="card-header">
+              <div>
+                <h3>Platform Analytics</h3>
+                <span>Overview of students, courses, and learning progress</span>
+              </div>
+              <button onClick={loadAnalytics} className="btn-secondary" disabled={loading}>
+                <i className="fa-solid fa-rotate-right" /> Refresh
+              </button>
+            </div>
+
+            {loading && <div className="empty-state">Loading analytics...</div>}
+            {error && <div className="error-text">{error}</div>}
+
+            {analytics && (
+              <div className="card-body">
+                {/* Stats Cards Grid */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+                  <div style={{
+                    padding: "1.2rem",
+                    background: "rgba(34, 197, 94, 0.1)",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(34, 197, 94, 0.3)",
+                  }}>
+                    <div style={{ fontSize: ".85rem", color: "#9ca3af", marginBottom: ".3rem" }}>
+                      <i className="fa-solid fa-users" /> Total Students
+                    </div>
+                    <div style={{ fontSize: "2rem", fontWeight: 700, color: "#22c55e" }}>
+                      {analytics.totalStudents}
+                    </div>
+                  </div>
+
+                  <div style={{
+                    padding: "1.2rem",
+                    background: "rgba(59, 130, 246, 0.1)",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(59, 130, 246, 0.3)",
+                  }}>
+                    <div style={{ fontSize: ".85rem", color: "#9ca3af", marginBottom: ".3rem" }}>
+                      <i className="fa-solid fa-book" /> Total Courses
+                    </div>
+                    <div style={{ fontSize: "2rem", fontWeight: 700, color: "#3b82f6" }}>
+                      {analytics.totalCourses}
+                    </div>
+                  </div>
+
+                  <div style={{
+                    padding: "1.2rem",
+                    background: "rgba(168, 85, 247, 0.1)",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(168, 85, 247, 0.3)",
+                  }}>
+                    <div style={{ fontSize: ".85rem", color: "#9ca3af", marginBottom: ".3rem" }}>
+                      <i className="fa-solid fa-graduation-cap" /> Total Enrollments
+                    </div>
+                    <div style={{ fontSize: "2rem", fontWeight: 700, color: "#a855f7" }}>
+                      {analytics.totalEnrollments}
+                    </div>
+                  </div>
+
+                  <div style={{
+                    padding: "1.2rem",
+                    background: "rgba(251, 146, 60, 0.1)",
+                    borderRadius: "0.5rem",
+                    border: "1px solid rgba(251, 146, 60, 0.3)",
+                  }}>
+                    <div style={{ fontSize: ".85rem", color: "#9ca3af", marginBottom: ".3rem" }}>
+                      <i className="fa-solid fa-chart-bar" /> Avg Enrollments/Course
+                    </div>
+                    <div style={{ fontSize: "2rem", fontWeight: 700, color: "#fb923c" }}>
+                      {analytics.avgEnrollmentsPerCourse}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Progress Metrics */}
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1.5rem" }}>
+                  <div>
+                    <h4 style={{ marginBottom: ".8rem" }}>
+                      <i className="fa-solid fa-fire" /> Avg Progress Overall
+                    </h4>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                      <div style={{ flex: 1 }}>
+                        <div className="progress-pill">
+                          <div
+                            className="progress-pill-inner"
+                            style={{ width: `${analytics.avgProgressOverall}%` }}
+                          />
+                        </div>
+                      </div>
+                      <strong style={{ fontSize: "1.3rem" }}>
+                        {analytics.avgProgressOverall.toFixed(1)}%
+                      </strong>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h4 style={{ marginBottom: ".8rem" }}>
+                      <i className="fa-solid fa-check-circle" /> Completion Rate
+                    </h4>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                      <div style={{ flex: 1 }}>
+                        <div className="progress-pill">
+                          <div
+                            className="progress-pill-inner"
+                            style={{ width: `${analytics.completionRate}%`, background: analytics.completionRate >= 70 ? "#22c55e" : analytics.completionRate >= 40 ? "#f59e0b" : "#ef4444" }}
+                          />
+                        </div>
+                      </div>
+                      <strong style={{ fontSize: "1.3rem" }}>
+                        {analytics.completionRate}% ({analytics.completedEnrollments}/{analytics.totalEnrollments})
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Summary Stats */}
+                <div style={{ marginTop: "1.5rem", padding: "1rem", background: "rgba(148,163,184,0.1)", borderRadius: "0.375rem" }}>
+                  <p style={{ fontSize: ".85rem", marginBottom: ".5rem" }}>
+                    <strong>Summary:</strong> Your platform has {analytics.totalStudents} students across {analytics.totalCourses} courses with {analytics.totalEnrollments} active enrollments.
+                  </p>
+                  <p style={{ fontSize: ".85rem" }}>
+                    Students are progressing at an average of {analytics.avgProgressOverall.toFixed(1)}% with {analytics.completionRate}% having completed at least one course.
+                  </p>
+                </div>
+              </div>
+            )}
+          </section>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<AppShell />);
+    </script>
+  </body>
+</html>
