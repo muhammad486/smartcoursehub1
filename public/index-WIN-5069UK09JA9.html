@@ -2,9 +2,6 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
     <title>SmartCourseHub</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <!-- Google Font -->
@@ -807,16 +804,6 @@
                     <i className="fa-solid fa-chart-line" />
                     <span>Analytics</span>
                   </li>
-                  <li
-                    className={
-                      "nav-item " +
-                      (page === "admin-manage" ? "active" : "")
-                    }
-                    onClick={() => handleNavClick("admin-manage")}
-                  >
-                    <i className="fa-solid fa-user-shield" />
-                    <span>Manage Admins</span>
-                  </li>
                 </ul>
               </>
             )}
@@ -843,9 +830,7 @@
                     MongoDB.
                   </p>
                 </>
-              ) : (
-                <p className="small-note">Login or sign up to access features.</p>
-              )}
+              ) : null}
             </div>
           </aside>
         );
@@ -862,7 +847,6 @@
           "admin-courses": "Admin • Manage Courses",
           "admin-enrollments": "Admin • Student Enrollments",
           "admin-analytics": "Admin • Analytics Dashboard",
-          "admin-manage": "Admin • Manage Admins",
         };
 
         const subtitleMap = {
@@ -880,8 +864,6 @@
             "Monitor which students registered for which course and their basic details.",
           "admin-analytics":
             "View comprehensive statistics about students, courses, enrollments, and learning progress.",
-          "admin-manage":
-            "Create and manage administrator accounts. Only existing admins can add new admins.",
         };
 
         return (
@@ -910,6 +892,9 @@
                         <i className="fa-solid fa-right-to-bracket" /> Login to
                         start
                       </span>
+                      <span className="chip">
+                        <i className="fa-solid fa-code" /> React + Node + MongoDB
+                      </span>
                     </>
                   )}
                 </div>
@@ -921,6 +906,7 @@
 
       function AuthPanel({ onAuthSuccess }) {
         const [mode, setMode] = useState("login"); // login | signup
+        const [role, setRole] = useState("user"); // user | admin (signup only)
         const [form, setForm] = useState({
           name: "",
           email: "",
@@ -978,7 +964,8 @@
               const body = {
                 name: form.name,
                 email: form.email,
-                password: form.password
+                password: form.password,
+                role,
               };
               const data = await apiFetch("/api/auth/register", {
                 method: "POST",
@@ -1033,7 +1020,24 @@
                 </div>
               </div>
 
-              {/* Admin signup option removed to prevent users elevating to admin */}
+              {mode === "signup" && (
+                <div className="auth-toggle-role">
+                  <button
+                    type="button"
+                    className={role === "user" ? "active" : ""}
+                    onClick={() => setRole("user")}
+                  >
+                    Student
+                  </button>
+                  <button
+                    type="button"
+                    className={role === "admin" ? "active" : ""}
+                    onClick={() => setRole("admin")}
+                  >
+                    Admin
+                  </button>
+                </div>
+              )}
 
               <form onSubmit={handleSubmit}>
                 {mode === "signup" && (
@@ -1093,24 +1097,17 @@
                 </div>
               </div>
               <div className="card-body">
-                <p className="lead" style={{ marginBottom: ".8rem" }}>
-                  SmartCourseHub is a focused, practical learning portal for computer
-                  science students — concise course notes, hands-on projects, curated
-                  playlists, progress tracking, and verified certificates to showcase
-                  your accomplishments.
-                </p>
                 <ul style={{ listStyle: "none", display: "grid", gap: ".5rem" }}>
                   <li>
-                    <i className="fa-solid fa-check-circle" /> Curated CS courses with
-                    concise notes and clear learning paths
+                    <i className="fa-solid fa-check-circle" /> Separate Student & Admin login
                   </li>
                   <li>
-                    <i className="fa-solid fa-check-circle" /> Hands-on projects and
-                    guided playlists to build real skills
+                    <i className="fa-solid fa-check-circle" /> Course registration with form
+                    (name, phone, college, semester, etc.)
                   </li>
                   <li>
-                    <i className="fa-solid fa-check-circle" /> Track progress and
-                    earn downloadable certificates upon completion
+                    <i className="fa-solid fa-check-circle" /> Course page with Notes, PDFs,
+                    YouTube playlist, guidance & projects
                   </li>
                   <li>
                     <i className="fa-solid fa-check-circle" /> MongoDB storage for users, courses
@@ -1218,7 +1215,7 @@
             // Issue certificate if progress reaches 100%
             if (progress === 100) {
               try {
-                await apiFetch(
+                const certRes = await apiFetch(
                   "/api/certificates/issue",
                   {
                     method: "POST",
@@ -1226,10 +1223,11 @@
                   },
                   token
                 );
+                console.log("Certificate issued successfully:", certRes);
                 alert("🎉 Congratulations! You've earned a Certificate of Completion!");
               } catch (err) {
-                // Certificate may already exist, continue silently
-                console.log("Certificate info:", err.message);
+                console.error("Certificate issuance error:", err);
+                console.error("Error details:", err.message);
               }
             }
           } catch (err) {
@@ -1402,19 +1400,7 @@
                       }}
                       style={{ cursor: "pointer" }}
                     >
-                      <div className="course-title">
-                        {course.title}
-                        {course.price > 0 && (
-                          <span style={{ marginLeft: ".5rem", fontSize: ".8rem", color: "#f97316" }}>
-                            💳 ₹{course.price}
-                          </span>
-                        )}
-                        {!course.price && (
-                          <span style={{ marginLeft: ".5rem", fontSize: ".8rem", color: "#22c55e" }}>
-                            ✅ Free
-                          </span>
-                        )}
-                      </div>
+                      <div className="course-title">{course.title}</div>
                       {/* Star Rating Display */}
                       <div style={{ fontSize: ".85rem", marginBottom: ".5rem", color: "#f59e0b" }}>
                         {course.averageRating ? (
@@ -1544,7 +1530,6 @@
         const [reviews, setReviews] = useState([]);
         const [reviewsLoading, setReviewsLoading] = useState(false);
         const [reviewSubmitting, setReviewSubmitting] = useState(false);
-        // Payments removed — all resources are free
 
         const handleChange = (e) => {
           setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
@@ -1614,16 +1599,22 @@
                 try {
                   const enrollments = await apiFetch(`/api/enrollments`, {}, token);
                   const updated = enrollments.find(e => e._id === enrollment._id);
+                  console.log("Enrollment updated check:", { updated, progress: updated?.progress });
                   if (updated && updated.progress === 100) {
-                    await apiFetch(
-                      "/api/certificates/issue",
-                      {
-                        method: "POST",
-                        body: JSON.stringify({ enrollmentId: enrollment._id }),
-                      },
-                      token
-                    );
-                    alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+                    try {
+                      const certRes = await apiFetch(
+                        "/api/certificates/issue",
+                        {
+                          method: "POST",
+                          body: JSON.stringify({ enrollmentId: enrollment._id }),
+                        },
+                        token
+                      );
+                      console.log("Certificate issued:", certRes);
+                      alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+                    } catch (certErr) {
+                      console.error("Certificate issue failed:", certErr.message);
+                    }
                   }
                 } catch (err) {
                   console.log("Certificate check:", err.message);
@@ -1635,13 +1626,11 @@
           }
         };
 
-        // Payment functions removed — no payment flow
-
         const handleSubmit = async (e) => {
           e.preventDefault();
           setSubmitting(true);
           try {
-            await onEnroll(course._id, form, async (newEnrollment) => {
+            await onEnroll(course._id, form, () => {
               setForm({
                 fullName: "",
                 phone: "",
@@ -1649,9 +1638,8 @@
                 semester: "",
                 additionalNotes: "",
               });
-              
-              // Registration complete — resources are free
               alert("Successfully registered for course!");
+              // Wait for enrollments to reload before switching tab
               setTimeout(() => {
                 setActiveTab("resources");
               }, 500);
@@ -1679,12 +1667,8 @@
                   "section-tab " + (activeTab === "resources" ? "active" : "")
                 }
                 onClick={() => {
-                  if (!isEnrolled) return alert("Please register for this course first to access resources");
-                  // Prevent access if payment is required but not completed
-                  if (enrollment && enrollment.paymentRequired && enrollment.paymentStatus !== 'completed') {
-                    return alert('Payment is required to access this course. Please complete payment first.');
-                  }
-                  setActiveTab("resources");
+                  if (isEnrolled) setActiveTab("resources");
+                  else alert("Please register for this course first to access resources");
                 }}
                 style={{ opacity: isEnrolled ? 1 : 0.5, cursor: isEnrolled ? "pointer" : "not-allowed" }}
               >
@@ -1742,18 +1726,7 @@
               <div>
                 {!isEnrolled ? (
                   <div className="empty-state">
-                    <i className="fa-solid fa-lock" /> 
-                    {!isEnrolled ? (
-                      <>
-                        <p>You need to register for this course first.</p>
-                        
-                        <p style={{ marginTop: ".5rem", fontSize: ".85rem", opacity: 0.8 }}>
-                          Click the <strong>"Register Now"</strong> tab to enroll.
-                        </p>
-                      </>
-                    ) : (
-                      null
-                    )}
+                    <i className="fa-solid fa-lock" /> You need to register for this course first to access resources.
                   </div>
                 ) : (
                   <>
@@ -1801,17 +1774,6 @@
                       </a>
                     )}
 
-                    {course.videoUrl && (
-                      <a
-                        href="javascript:void(0)"
-                        className="link-chip"
-                        onClick={() => handleTrackResource("video")}
-                        style={{ cursor: "pointer" }}
-                      >
-                        <i className="fa-solid fa-video" /> Watch Video
-                      </a>
-                    )}
-
                     {course.guidance && (
                       <div style={{ marginTop: ".7rem", fontSize: ".8rem" }}>
                         <p>
@@ -1837,13 +1799,19 @@
                                 try {
                                   const enrollments = await apiFetch(`/api/enrollments`, {}, token);
                                   const updated = enrollments.find(e => e._id === enrollment._id);
+                                  console.log("Guidance completion check:", { updated, progress: updated?.progress });
                                   if (updated && updated.progress === 100) {
-                                    await apiFetch(
-                                      "/api/certificates/issue",
-                                      { method: "POST", body: JSON.stringify({ enrollmentId: enrollment._id }) },
-                                      token
-                                    );
-                                    alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+                                    try {
+                                      const certRes = await apiFetch(
+                                        "/api/certificates/issue",
+                                        { method: "POST", body: JSON.stringify({ enrollmentId: enrollment._id }) },
+                                        token
+                                      );
+                                      console.log("Certificate issued after guidance:", certRes);
+                                      alert("🎉 Congratulations! You've earned a Certificate of Completion!");
+                                    } catch (certErr) {
+                                      console.error("Certificate issue failed:", certErr.message);
+                                    }
                                   }
                                 } catch (err) {
                                   console.log("Certificate check after guidance:", err.message);
@@ -2030,8 +1998,6 @@
                         {submitting ? "Registering..." : "Register for this course"}
                       </button>
                     </form>
-
-                    {/* Payment UI removed — resources are free */}
                   </>
                 )}
               </div>
@@ -2083,9 +2049,6 @@
                       Certified
                     </div>
                   )}
-
-                  {/* Payment badges removed — all courses free */}
-
                   <div className="course-title">{en.course?.title}</div>
                   <p className="course-desc">
                     <strong>College:</strong> {en.college} •{" "}
@@ -2249,32 +2212,12 @@
 
         async function handleDownload(certId) {
           try {
-            // Download the PDF certificate
-            const response = await fetch(
-              `/api/certificates/${certId}/download-pdf`,
-              {
-                headers: {
-                  'Authorization': `Bearer ${token}`
-                }
-              }
+            await apiFetch(
+              `/api/certificates/${certId}/download`,
+              { method: "PATCH" },
+              token
             );
-            
-            if (!response.ok) {
-              throw new Error('Failed to generate certificate');
-            }
-            
-            // Create a blob and download it
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `certificate_${certId}.pdf`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            window.URL.revokeObjectURL(url);
-            
-            alert("Certificate downloaded successfully!");
+            alert("Certificate marked as downloaded!");
             loadCertificates();
           } catch (err) {
             alert("Error: " + err.message);
@@ -2471,9 +2414,6 @@
                 token={token}
               />
             )}
-            {page === "admin-manage" && (
-              <AdminManagementView token={token} />
-            )}
           </>
         );
       }
@@ -2492,11 +2432,9 @@
           shortDescription: "",
           level: "Beginner",
           category: "Computer Science",
-          price: 0,
           notesUrl: "",
           pdfUrl: "",
           youtubePlaylistUrl: "",
-          videoUrl: "",
           guidance: "",
           projects: "",
         });
@@ -2509,7 +2447,6 @@
               shortDescription: "",
               level: "Beginner",
               category: "Computer Science",
-              price: 0,
               notesUrl: "",
               pdfUrl: "",
               youtubePlaylistUrl: "",
@@ -2574,22 +2511,7 @@
                     </select>
                   </div>
                   <div className="form-group">
-                    <label>Course Price (₹) - Leave 0 for FREE</label>
-                    <input
-                      name="price"
-                      type="number"
-                      min="0"
-                      placeholder="e.g. 499 or 0 for free"
-                      value={form.price || 0}
-                      onChange={handleChange}
-                    />
-                    <small style={{ color: "#9ca3af", marginTop: ".2rem", display: "block" }}>
-                      {form.price > 0 
-                        ? `💳 Paid course (₹${form.price})` 
-                        : `✅ Free course (No payment required)`}
-                    </small>
-                  </div>
-                  <div className="form-group">
+                    <label>Notes URL</label>
                     <input
                       name="notesUrl"
                       placeholder="https://..."
@@ -2606,24 +2528,15 @@
                       onChange={handleChange}
                     />
                   </div>
-                      <div className="form-group">
-                        <label>YouTube Playlist URL</label>
-                        <input
-                          name="youtubePlaylistUrl"
-                          placeholder="https://youtube.com/playlist?list=..."
-                          value={form.youtubePlaylistUrl || ""}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <div className="form-group">
-                        <label>Course Video URL</label>
-                        <input
-                          name="videoUrl"
-                          placeholder="https://youtube.com/watch?v=... or https://..."
-                          value={form.videoUrl || ""}
-                          onChange={handleChange}
-                        />
-                      </div>
+                  <div className="form-group">
+                    <label>YouTube Playlist URL</label>
+                    <input
+                      name="youtubePlaylistUrl"
+                      placeholder="https://youtube.com/playlist?list=..."
+                      value={form.youtubePlaylistUrl || ""}
+                      onChange={handleChange}
+                    />
+                  </div>
                   <div className="form-group">
                     <label>Guidance (Text)</label>
                     <textarea
@@ -2705,16 +2618,6 @@
                       <div>
                         <div style={{ fontSize: ".85rem", fontWeight: 500 }}>
                           {c.title}
-                          {c.price > 0 && (
-                            <span style={{ marginLeft: ".5rem", color: "#f97316" }}>
-                              💳 ₹{c.price}
-                            </span>
-                          )}
-                          {!c.price && (
-                            <span style={{ marginLeft: ".5rem", color: "#22c55e" }}>
-                              ✅ Free
-                            </span>
-                          )}
                         </div>
                         <div style={{ fontSize: ".75rem", color: "#9ca3af" }}>
                           {c.level} • {c.category}
@@ -2963,71 +2866,7 @@
         );
       }
 
-      function AdminManagementView({ token }) {
-        const [form, setForm] = useState({ name: "", email: "", password: "" });
-        const [loading, setLoading] = useState(false);
-        const [message, setMessage] = useState("");
-        const [error, setError] = useState("");
-
-        const handleChange = (e) => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
-
-        const handleSubmit = async (e) => {
-          e.preventDefault();
-          setError("");
-          setMessage("");
-          if (!form.name || !form.email || !form.password) {
-            setError('All fields are required');
-            return;
-          }
-          setLoading(true);
-          try {
-            const data = await apiFetch('/api/admin/create-admin', {
-              method: 'POST',
-              body: JSON.stringify(form)
-            }, token);
-            setMessage(`Admin created: ${data.email}`);
-            setForm({ name: "", email: "", password: "" });
-          } catch (err) {
-            setError(err.message);
-          } finally {
-            setLoading(false);
-          }
-        };
-
-        return (
-          <section className="card">
-            <div className="card-header">
-              <div>
-                <h3>Manage Admins</h3>
-                <span>Create a new administrator account</span>
-              </div>
-            </div>
-            <div className="card-body">
-              <form onSubmit={handleSubmit} style={{ maxWidth: '520px' }}>
-                <div className="form-group">
-                  <label>Full Name</label>
-                  <input name="name" value={form.name} onChange={handleChange} required />
-                </div>
-                <div className="form-group">
-                  <label>Email</label>
-                  <input name="email" type="email" value={form.email} onChange={handleChange} required />
-                </div>
-                <div className="form-group">
-                  <label>Password</label>
-                  <input name="password" type="password" value={form.password} onChange={handleChange} required />
-                </div>
-                {error && <div className="error-text">{error}</div>}
-                {message && <div className="success-text">{message}</div>}
-                <button className="btn btn-primary" disabled={loading}>
-                  {loading ? 'Creating...' : 'Create Admin'}
-                </button>
-              </form>
-            </div>
-          </section>
-        );
-      }
-
-      ReactDOM.createRoot(document.getElementById("root")).render(React.createElement(AppShell));
+      ReactDOM.createRoot(document.getElementById("root")).render(<AppShell />);
     </script>
   </body>
 </html>

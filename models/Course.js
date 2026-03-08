@@ -8,8 +8,10 @@ const courseSchema = new mongoose.Schema({
   notesUrl: { type: String },
   pdfUrl: { type: String },
   youtubePlaylistUrl: { type: String },
+  videoUrl: { type: String },
   guidance: { type: String },
   projects: { type: String },
+  price: { type: Number, default: 0 }, // Course price in INR (0 = free)
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   createdAt: { type: Date, default: Date.now },
   // Ratings & Reviews

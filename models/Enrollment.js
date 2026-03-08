@@ -11,9 +11,18 @@ const enrollmentSchema = new mongoose.Schema({
   progress: { type: Number, default: 0 }, // 0–100
   createdAt: { type: Date, default: Date.now },
   notesCompleted: { type: Boolean, default: false },
-pdfCompleted: { type: Boolean, default: false },
-playlistCompleted: { type: Boolean, default: false },
-guidanceCompleted: { type: Boolean, default: false },
+  pdfCompleted: { type: Boolean, default: false },
+  playlistCompleted: { type: Boolean, default: false },
+  videoCompleted: { type: Boolean, default: false },
+  guidanceCompleted: { type: Boolean, default: false },
+  // Payment fields
+  paymentRequired: { type: Boolean, default: false }, // true if course has price
+  paymentAmount: { type: Number, default: 0 }, // Amount paid in INR
+  paymentStatus: { type: String, enum: ['pending', 'completed', 'failed'], default: 'pending' },
+  paymentId: { type: String }, // Transaction reference ID
+  transactionId: { type: String }, // UPI transaction ID
+  paidAt: { type: Date }, // When payment was completed
+  paymentMethod: { type: String, default: 'upi' } // UPI payment method
 });
 
 module.exports = mongoose.model('Enrollment', enrollmentSchema);
